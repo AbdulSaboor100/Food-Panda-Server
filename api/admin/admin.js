@@ -3,24 +3,40 @@ import User from "../../modals/User/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "config";
+import {
+  isEmail,
+  isEmpty,
+  comparePassword,
+  hashPassword,
+} from "../../functions/functions.js";
 
 const router = express();
 const secretJwtKey = config.get("jwtSecret");
 
-const hashPassword = async (password) => {
-  let salts = 10;
-  let resultHash = await bcrypt.hash(password, salts);
-  return resultHash;
-};
-
-const comparePassword = async (hashPass, password) => {
-  let resultBool = bcrypt.compare(password, hashPass);
-  return resultBool;
-};
-
 router.post("/register", async (req, res) => {
   try {
     let { email, password } = req.body;
+    if (isEmpty(email)) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Email not found" });
+    }
+    if (isEmpty(password)) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Password not found" });
+    }
+    if (!isEmail(email)) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Email not valid", email });
+    }
+    if (isLength(password)) {
+      return res.status(400).json({
+        success: false,
+        status: "Password is less then 6 characters",
+      });
+    }
     let user = await User.findOne({ email });
     if (user) {
       return res
@@ -56,6 +72,27 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     let { email, password } = req.body;
+    if (isEmpty(email)) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Email not found" });
+    }
+    if (isEmpty(password)) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Password not found" });
+    }
+    if (!isEmail(email)) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Email not valid", email });
+    }
+    if (isLength(password)) {
+      return res.status(400).json({
+        success: false,
+        status: "Password is less then 6 characters",
+      });
+    }
     let user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ success: false, status: "User not exits" });
