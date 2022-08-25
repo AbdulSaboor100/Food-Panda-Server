@@ -16,7 +16,7 @@ const secretJwtKey = config.get("jwtSecret");
 
 router.post("/register", async (req, res) => {
   try {
-    let { email, password } = req.body;
+    let { email, password, name } = req.body;
     if (isEmpty(email)) {
       return res
         .status(400)
@@ -26,6 +26,9 @@ router.post("/register", async (req, res) => {
       return res
         .status(400)
         .json({ success: false, status: "Password not found" });
+    }
+    if (isEmpty(name)) {
+      return res.status(400).json({ success: false, status: "Name not found" });
     }
     if (!isEmail(email)) {
       return res
@@ -48,6 +51,7 @@ router.post("/register", async (req, res) => {
       email,
       password: await hashPassword(password),
       usertype: "CLIENT",
+      name,
     });
     await user.save();
     let payload = {
