@@ -18,8 +18,12 @@ const isEmail = (email) => {
 };
 
 const isEmpty = (value) => {
-  let result = validator.isEmpty(value, { ignore_whitespace: false });
-  return result;
+  if (value) {
+    let result = validator.isEmpty(value, { ignore_whitespace: false });
+    return result;
+  } else {
+    return true;
+  }
 };
 
 const isLength = (value) => {
