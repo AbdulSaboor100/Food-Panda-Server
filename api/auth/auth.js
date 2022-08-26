@@ -10,6 +10,7 @@ import {
   isEmpty,
   isLength,
 } from "../../functions/functions.js";
+import authController from "../../middleware/authController.js";
 
 const router = express();
 const secretJwtKey = config.get("jwtSecret");
@@ -119,6 +120,41 @@ router.post("/login", async (req, res) => {
           .status(200)
           .json({ success: true, status: "Login successfully", token });
       }
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, status: error?.response, error: error });
+    console.log(error);
+  }
+});
+
+router.get("/is-email", async (req, res) => {
+  try {
+    let { email, password } = req.body;
+    if (isEmpty(email)) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Email not valid or empty" });
+    }
+    if (!isEmail(email)) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Email not found", email });
+    }
+    let user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        status: "Email not found",
+        isRegistered: false,
+      });
+    }
+    res.status(400).json({
+      success: true,
+      status: "Email found",
+      isRegistered: true,
+      email: user?.email,
     });
   } catch (error) {
     res
