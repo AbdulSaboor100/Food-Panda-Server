@@ -129,9 +129,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/is-email", async (req, res) => {
+router.post("/is-email", async (req, res) => {
   try {
-    let { email, password } = req.body;
+    let { email } = req.body;
     if (isEmpty(email)) {
       return res
         .status(400)
@@ -144,17 +144,47 @@ router.get("/is-email", async (req, res) => {
     }
     let user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({
+      return res.status(200).json({
         success: false,
         status: "Email not found",
         isRegistered: false,
       });
     }
-    res.status(400).json({
+    res.status(200).json({
       success: true,
       status: "Email found",
       isRegistered: true,
       email: user?.email,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, status: error?.response, error: error });
+    console.log(error);
+  }
+});
+
+router.post("/current-user", authController, async (req, res) => {
+  try {
+    let id = req?.user?.id;
+    let user = await User.findOne({ _id: id }).select("-password");
+    if (!user) {
+      return res.status(400).json({ success: false, status: "User not found" });
+    }
+    let payload = {
+      id: user._id,
+    };
+    jwt.sign(payload, secretJwtKey, { expiresIn: "1h" }, (err, token) => {
+      if (err) {
+        throw err;
+      } else {
+        res.status(200).json({
+          success: true,
+          status: "User fetched successfully",
+          user,
+          token,
+        });
+      }
     });
   } catch (error) {
     res
