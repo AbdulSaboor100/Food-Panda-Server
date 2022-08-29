@@ -8,6 +8,7 @@ import {
   isEmpty,
   comparePassword,
   hashPassword,
+  isLength,
 } from "../../functions/functions.js";
 
 const router = express();
