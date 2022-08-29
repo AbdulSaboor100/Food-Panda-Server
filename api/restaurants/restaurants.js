@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "config";
 import authController from "../../middleware/authController.js";
+import mongoose from "mongoose";
 
 const router = express();
 const secretJwtKey = config.get("jwtSecret");
@@ -65,8 +66,42 @@ router.put("/update-restaurant/:id", authController, async (req, res) => {
 
 router.delete("/delete-restaurant/:id", authController, async (req, res) => {
   try {
-    let id = req.params;
-    console.log(id);
+    let { id } = req.params;
+    let user = req.user?.id;
+    let restaurant = await Restaurant.findById({ _id: id });
+    if (String(restaurant?.user) !== String(mongoose.Types.ObjectId(user))) {
+      return res.status(400).json({
+        success: false,
+        status: "You are not the owner of this restaurant",
+      });
+    }
+    if (!restaurant) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Restaurant not found" });
+    }
+    await Restaurant.deleteOne({ _id: id });
+    res.status(200).json({ success: true, status: "Restaurant Deleted" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, status: error?.response, error: error });
+    console.log(error);
+  }
+});
+
+router.get("/my-restaurant", authController, async (req, res) => {
+  try {
+    let user = req.user.id;
+    let restaurant = await Restaurant.find({ user });
+    if (!restaurant) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Restaurant not found" });
+    }
+    res
+      .status(200)
+      .json({ success: true, status: "Restaurant Fetched", restaurant });
   } catch (error) {
     res
       .status(500)
