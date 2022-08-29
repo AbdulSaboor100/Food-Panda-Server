@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
   },
-  usertype: {
+  userType: {
     type: String,
   },
   name: {

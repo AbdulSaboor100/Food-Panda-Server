@@ -47,7 +47,7 @@ router.post("/register", async (req, res) => {
     user = new User({
       email,
       password: await hashPassword(password),
-      usertype: "ADMIN",
+      userType: "ADMIN",
     });
     await user.save();
     let payload = {

@@ -12,7 +12,7 @@ const secretJwtKey = config.get("jwtSecret");
 router.post("/add-restaurant", authController, async (req, res) => {
   try {
     let user = await User.findOne({ user: req.user.id });
-    if (user.usertype !== "ADMIN") {
+    if (user.userType !== "ADMIN") {
       return res
         .status(400)
         .json({ success: false, status: "Token is invalid" });
