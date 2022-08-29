@@ -2,6 +2,7 @@ import express from "express";
 import { connectDb } from "./config/db.js";
 import auth from "./api/auth/auth.js";
 import admin from "./api/admin/admin.js";
+import image from "./api/image/image.js";
 import restaurant from "./api/restaurants/restaurants.js";
 import cors from "cors";
 
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", auth);
 app.use("/api/admin", admin);
 app.use("/api/restaurant", restaurant);
+app.use("/api/image", image);
 
 app.listen(PORT, () => {
   console.log(`Server running at ${PORT}`);

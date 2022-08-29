@@ -63,4 +63,16 @@ router.put("/update-restaurant/:id", authController, async (req, res) => {
   }
 });
 
+router.delete("/delete-restaurant/:id", authController, async (req, res) => {
+  try {
+    let id = req.params;
+    console.log(id);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, status: error?.response, error: error });
+    console.log(error);
+  }
+});
+
 export default router;
