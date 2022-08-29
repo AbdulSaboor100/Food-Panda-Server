@@ -164,7 +164,7 @@ router.post("/is-email", async (req, res) => {
   }
 });
 
-router.post("/current-user", authController, async (req, res) => {
+router.get("/current-user", authController, async (req, res) => {
   try {
     let id = req?.user?.id;
     let user = await User.findOne({ _id: id }).select("-password");
