@@ -28,11 +28,21 @@ router.post("/add-restaurant", authController, async (req, res) => {
         status: "City not found",
       });
     }
-    if (!location?.coordinates[0] && !location?.coordinates[1]) {
-      return res.status(400).json({
-        success: false,
-        status: "Lat Or Long not found",
-      });
+    if (!location) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Lat Or Long not found" });
+    } else if (location?.coordinates) {
+      if (!location?.coordinates[0] && !location?.coordinates[1]) {
+        return res.status(400).json({
+          success: false,
+          status: "Lat Or Long not found",
+        });
+      }
+    } else {
+      return res
+        .status(400)
+        .json({ success: false, status: "Lat Or Long not found" });
     }
     let user = await User.findOne({ user: req.user.id });
     if (user.userType !== "ADMIN") {
