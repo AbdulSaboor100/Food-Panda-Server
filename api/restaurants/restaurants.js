@@ -28,7 +28,7 @@ router.post("/add-restaurant", authController, async (req, res) => {
         status: "City not found",
       });
     }
-    if (location[0] && location[1]) {
+    if (!location?.coordinates[0] && !location?.coordinates[1]) {
       return res.status(400).json({
         success: false,
         status: "Lat Or Long not found",
