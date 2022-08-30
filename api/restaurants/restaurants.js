@@ -6,19 +6,40 @@ import jwt from "jsonwebtoken";
 import config from "config";
 import authController from "../../middleware/authController.js";
 import mongoose from "mongoose";
+import { isEmpty } from "../../functions/functions.js";
 
 const router = express();
 const secretJwtKey = config.get("jwtSecret");
 
 router.post("/add-restaurant", authController, async (req, res) => {
   try {
+    let { name, restaurantStatus, location, image, city } = req.body;
+    if (isEmpty(name)) {
+      return res.status(400).json({ success: false, status: "Name not found" });
+    }
+    if (isEmpty(image)) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Image not found" });
+    }
+    if (isEmpty(city)) {
+      return res.status(400).json({
+        success: false,
+        status: "City not found",
+      });
+    }
+    if (location[0] && location[1]) {
+      return res.status(400).json({
+        success: false,
+        status: "Lat Or Long not found",
+      });
+    }
     let user = await User.findOne({ user: req.user.id });
     if (user.userType !== "ADMIN") {
       return res
         .status(400)
         .json({ success: false, status: "Token is invalid" });
     }
-    let { name, restaurantStatus, location, image, city } = req.body;
     let restaurant = new Restaurant({
       name,
       restaurantStatus,
