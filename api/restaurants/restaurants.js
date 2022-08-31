@@ -56,7 +56,7 @@ router.post("/add-restaurant", authController, async (req, res) => {
       location,
       image,
       user: req.user.id,
-      city,
+      city: city?.toUpperCase(),
     });
     await restaurant.save();
     res
@@ -133,6 +133,27 @@ router.get("/my-restaurant", authController, async (req, res) => {
     res
       .status(200)
       .json({ success: true, status: "Restaurant Fetched", restaurant });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, status: error?.response, error: error });
+    console.log(error);
+  }
+});
+
+router.get("/all-restaurant/:id", async (req, res) => {
+  try {
+    let { id } = req?.params;
+    let city = id?.toUpperCase();
+    let restaurant = await Restaurant.find({ city });
+    if (!restaurant[0]) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Restaurants not found" });
+    }
+    res
+      .status(200)
+      .json({ success: true, status: "Restaurants Fetched", restaurant });
   } catch (error) {
     res
       .status(500)
