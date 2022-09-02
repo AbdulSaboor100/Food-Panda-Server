@@ -65,7 +65,7 @@ router.post("/add-restaurant", authController, async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ success: false, status: error?.response, error: error });
+      .json({ success: false, status: error?.message, error: error });
     console.log(error);
   }
 });
@@ -90,7 +90,7 @@ router.put("/update-restaurant/:id", authController, async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ success: false, status: error?.response, error: error });
+      .json({ success: false, status: error?.message, error: error });
     console.log(error);
   }
 });
@@ -116,7 +116,7 @@ router.delete("/delete-restaurant/:id", authController, async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ success: false, status: error?.response, error: error });
+      .json({ success: false, status: error?.message, error: error });
     console.log(error);
   }
 });
@@ -136,7 +136,7 @@ router.get("/my-restaurant", authController, async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ success: false, status: error?.response, error: error });
+      .json({ success: false, status: error?.message, error: error });
     console.log(error);
   }
 });
@@ -157,7 +157,30 @@ router.get("/all-restaurant/:id", async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ success: false, status: error?.response, error: error });
+      .json({ success: false, status: error?.message, error: error });
+    console.log(error);
+  }
+});
+
+router.get("/single-restaurant/:id", async (req, res) => {
+  try {
+    let { id } = req.params;
+    let restaurant = await Restaurant.findOne({ _id: id });
+    if (!id) {
+      return res.status(400).json({ success: false, status: "Id not found" });
+    }
+    if (!restaurant) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Restaurant not found" });
+    }
+    res
+      .status(200)
+      .json({ success: true, status: "Restaurant fetched", restaurant });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, status: "Restaurant not found", error: error });
     console.log(error);
   }
 });
