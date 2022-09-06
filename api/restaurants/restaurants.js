@@ -162,10 +162,10 @@ router.get("/all-restaurant/:id", async (req, res) => {
   }
 });
 
-router.get("/single-restaurant/:id", async (req, res) => {
+router.get("/single-restaurant", authController, async (req, res) => {
   try {
-    let { id } = req.params;
-    let restaurant = await Restaurant.findOne({ _id: id });
+    let user = req?.user?.id;
+    let restaurant = await Restaurant.findOne({ user: user });
     if (!id) {
       return res.status(400).json({ success: false, status: "Id not found" });
     }
