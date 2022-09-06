@@ -165,11 +165,11 @@ router.get("/all-restaurant/:id", async (req, res) => {
 router.get("/single-restaurant", authController, async (req, res) => {
   try {
     let user = req?.user?.id;
-    let restaurant = await Restaurant.findOne({ user: user });
-    if (!id) {
+    let restaurant = await Restaurant.find({ user });
+    if (!user) {
       return res.status(400).json({ success: false, status: "Id not found" });
     }
-    if (!restaurant) {
+    if (!restaurant[0]) {
       return res
         .status(400)
         .json({ success: false, status: "Restaurant not found" });
