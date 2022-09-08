@@ -185,4 +185,27 @@ router.get("/single-restaurant", authController, async (req, res) => {
   }
 });
 
+router.get("/get-restaurant/:id", authController, async (req, res) => {
+  try {
+    let { id } = req.params;
+    let restaurant = await Restaurant.findOne({ _id: id });
+    if (!id) {
+      return res.status(400).json({ success: false, status: "Id not found" });
+    }
+    if (!restaurant) {
+      return res
+        .status(400)
+        .json({ success: false, status: "Restaurant not found" });
+    }
+    res
+      .status(200)
+      .json({ success: true, status: "Restaurant fetched", restaurant });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, status: "Restaurant not found", error: error });
+    console.log(error);
+  }
+});
+
 export default router;
